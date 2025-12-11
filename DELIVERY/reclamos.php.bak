@@ -1,0 +1,24 @@
+if ($conexion->query($sql) === TRUE) {
+
+    echo "<script>
+        Swal.fire({
+            icon: 'success',
+            title: '¡Reclamo enviado!',
+            text: 'Tu reclamo ha sido registrado correctamente.',
+            confirmButtonColor: '#ffc107'
+        }).then(() => {
+            window.location.href = 'reclamos.php?boleta=1';
+        });
+    </script>";
+
+    exit();
+} else {
+    echo "<script>
+        Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: 'Ocurrió un error al registrar el reclamo.',
+            confirmButtonColor: '#dc3545'
+        });
+    </script>";
+}

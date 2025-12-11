@@ -1,0 +1,550 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Krochicken Delivery</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.10.0/css/all.min.css" rel="stylesheet" />
+
+    <style>
+    :root{
+      --naranja: #FF8C00;      /* Color principal: Naranja Vibrante */
+      --crema: #fffdd0;        /* Color secundario claro */
+      --negro: #000000;        /* Color oscuro */
+    }
+    body{ background:#f6f7fb; font-family: sans-serif; }
+
+    /* Marca "Krochicken" */
+    .logo-multi span{
+      display:inline-block;
+      padding:0 .35rem;
+      text-transform:uppercase;
+      font-weight:800;
+      letter-spacing:.5px;
+    }
+    .logo-multi .multi{ background:var(--negro); color:#ffffff; }
+    .logo-multi .vinos{ background:var(--naranja); color:var(--negro); }
+
+    /* Hero carousel */
+    .hero-caption{
+      backdrop-filter: blur(2px);
+      background: rgba(0,0,0,.5);
+      border-radius: 1rem;
+      padding: 1.25rem 1.5rem;
+    }
+    .btn-vino{ background:var(--naranja); color:var(--negro); border:none; font-weight:700; }
+    .btn-vino:hover{ filter:brightness(1.15); color:var(--negro); }
+
+    /* Fichas de valor (check, envío, etc.) */
+    .feature-tile{
+      padding:28px; background:#ffffff; border-radius:18px;
+      transition: transform .2s ease; box-shadow:0 8px 15px rgba(0,0,0,.04);
+    }
+    .feature-tile:hover{ transform: translateY(-2px); }
+    .feature-tile i{ color:var(--naranja); }
+
+    /* Buscador superior */
+    .search-wrap{ background:#ffffff; border-radius:999px; box-shadow:0 8px 20px rgba(0,0,0,.04); }
+    .search-wrap input{ border:0; outline:0; box-shadow:none; }
+    .search-wrap .input-group-text{ background:transparent; border:0; color:#666; }
+
+    /* Cards de producto */
+    .product-card{ border:0; border-radius:22px; overflow:hidden; box-shadow:0 10px 24px rgba(0,0,0,.06); background:#ffffff; }
+    .product-card .card-img-top{ height:200px; object-fit:cover; }
+    .price{ color:var(--naranja); font-size:1.25rem; font-weight:800; }
+    .add-cart{ border-radius:14px; background:var(--naranja); border:1px solid var(--naranja); color:var(--negro); font-weight:600; }
+    .add-cart:hover{ background:var(--negro); border-color:var(--negro); color:#fff; }
+
+    /* Ticker (se mantiene) */
+    .brand-ticker{
+      overflow:hidden; position:relative; background:#ffffff; border-radius:20px; box-shadow:0 8px 20px rgba(0,0,0,.05);
+    }
+    /* Etiquetas decorativas */
+    .badge-vino{ background:var(--naranja); color:var(--negro); }
+
+    /* --- EXTENSIONES NUEVAS --- */
+    .product-card .card-head{ background:var(--negro); color:#fff; font-weight:600; text-align:center; padding:.55rem; }
+    /* Transiciones de acción para destacar */
+    .product-card .card-actions{ position:absolute; top:48%; left:50%; transform:translate(-50%,-50%); display:flex; gap:.5rem; opacity:0; transition:.2s; }
+    .product-card:hover .card-actions{ opacity:1; }
+    .product-card .icon-btn{ width:38px; height:38px; display:grid; place-items:center; border-radius:8px; border:2px solid #fff; background:rgba(255,140,0,.95); color:#fff; }
+    .product-card .icon-btn:hover{ background:var(--negro); }
+    .section-title{ font-weight:800; letter-spacing:1px; }
+    .section-toolbar .nav-btn{ border:1px solid #dce1e7; width:34px; height:34px; display:grid; place-items:center; border-radius:8px; background:#fff; color:var(--naranja); }
+    .testimonial{ background:#fff; border-radius:18px; box-shadow:0 10px 24px rgba(0,0,0,.06); padding:16px; }
+    .testimonial img{ width:84px; height:84px; object-fit:cover; border-radius:50%; }
+    .footer-col h6{ font-weight:800; color:var(--naranja); }
+    .pay-logos img{ height:22px; margin-right:10px; opacity:.9; }
+    #toTop{ position:fixed; right:16px; bottom:16px; width:40px; height:40px; border-radius:10px; display:none; place-items:center; background:var(--naranja); color:var(--negro); z-index:1000; }
+    @keyframes scrollBrands{
+      0%   { transform: translateX(0); }
+      100% { transform: translateX(-50%); }
+    }
+  </style>
+</head>
+<body>
+
+    <div class="container py-3 d-none d-lg-block">
+    <div class="d-flex align-items-center justify-content-between">
+      <div class="logo-multi d-flex align-items-center">
+        <span class="h1 multi">KRO</span>
+        <span class="h1 vinos">CHICKEN</span>
+        <i class="fas fa-drumstick-bite fa-2x" style="color:var(--naranja); margin-left:.5rem" alt="Muslo de pollo" /></i>
+      </div>
+
+            <div class="col-6">
+        <div class="input-group search-wrap">
+          <span class="input-group-text ps-4"><i class="fas fa-search"></i></span>
+          <input id="searchInput" type="search" class="form-control py-3 pe-4" placeholder="Buscar combos, alitas, papas fritas…" aria-label="Buscar" />
+        </div>
+      </div>
+
+            <div class="d-flex align-items-center gap-3">
+        <a class="btn position-relative" href="#" aria-label="Favoritos">
+          <i class="far fa-heart fa-lg" style="color:var(--naranja)"></i>
+          <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">0</span>
+        </a>
+        <a class="btn position-relative" href="#" aria-label="Carrito">
+          <i class="fas fa-shopping-cart fa-lg" style="color:var(--naranja)"></i>
+          <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-dark">0</span>
+        </a>
+      </div>
+    </div>
+  </div>
+
+    <div class="container py-3 d-lg-none">
+    <div class="d-flex align-items-center justify-content-between">
+      <div class="logo-multi">
+        <span class="h1 multi">KRO</span>
+        <span class="h1 vinos">CHICKEN</span>
+      </div>
+      <button class="btn btn-vino" data-bs-toggle="collapse" data-bs-target="#mobileSearch"><i class="fas fa-search me-2"></i>Buscar</button>
+    </div>
+    <div id="mobileSearch" class="collapse mt-3">
+      <div class="input-group search-wrap">
+        <span class="input-group-text ps-4"><i class="fas fa-search"></i></span>
+        <input id="searchInputMobile" type="search" class="form-control py-3 pe-4" placeholder="Buscar combos, alitas, papas fritas…" aria-label="Buscar" />
+      </div>
+    </div>
+  </div>
+
+    <div class="container mb-4">
+    <div class="row g-3">
+      <div class="col-lg-8">
+        <div id="heroCarousel" class="carousel slide carousel-fade" data-bs-ride="carousel">
+          <div class="carousel-indicators">
+            <button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
+            <button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="1" aria-label="Slide 2"></button>
+            <button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="2" aria-label="Slide 3"></button>
+          </div>
+          <div class="carousel-inner rounded-4" style="height:430px">
+                        <div class="carousel-item active h-100">
+              <img src="img/pollo-crujiente.jpg" class="d-block w-100 h-100" style="object-fit:cover" alt="Piezas de pollo frito extra crujiente" />
+              <div class="carousel-caption d-flex align-items-center justify-content-center h-100">
+                <div class="hero-caption text-center text-white">
+                  <h2 class="mb-2">El Sabor que <u>hace Kró!</u></h2>
+                  <p class="mb-3">Pollo Frito, jugoso por dentro, crujiente por fuera.</p>
+                  <a class="btn btn-vino btn-lg" href="#combos"><i class="fas fa-fire me-2"></i> Ver Combos</a>
+                </div>
+              </div>
+            </div>
+                        <div class="carousel-item h-100">
+              <img src="img/alitas-picantes.jpg" class="d-block w-100 h-100" style="object-fit:cover" alt="Alitas en salsa picante" />
+              <div class="carousel-caption d-flex align-items-center justify-content-center h-100">
+                <div class="hero-caption text-center text-white">
+                  <h2 class="mb-2">¡Llegaron las Alitas Hot!</h2>
+                  <p class="mb-3">Elige entre BBQ, Buffalo o Mango Habanero.</p>
+                  <a class="btn btn-vino" href="#productos"><i class="fas fa-pepper-hot me-2"></i> Pedir Alitas</a>
+                </div>
+              </div>
+            </div>
+                        <div class="carousel-item h-100">
+              <img src="img/sandwich-gourmet.jpg" class="d-block w-100 h-100" style="object-fit:cover" alt="Sandwich de pollo frito gourmet" />
+              <div class="carousel-caption d-flex align-items-center justify-content-center h-100">
+                <div class="hero-caption text-center text-white">
+                  <h2 class="mb-2">El Chicken Sándwich del Año</h2>
+                  <p class="mb-3">Con pan brioche, pepinillos y mayonesa spicy.</p>
+                  <a class="btn btn-light" href="#productos"><i class="fas fa-burger me-2"></i> Ver Sándwiches</a>
+                </div>
+            </div>
+            </div>
+          </div>
+          <button class="carousel-control-prev" type="button" data-bs-target="#heroCarousel" data-bs-slide="prev"><span class="carousel-control-prev-icon" aria-hidden="true"></span><span class="visually-hidden">Anterior</span></button>
+          <button class="carousel-control-next" type="button" data-bs-target="#heroCarousel" data-bs-slide="next"><span class="carousel-control-next-icon" aria-hidden="true"></span><span class="visually-hidden">Siguiente</span></button>
+        </div>
+      </div>
+
+      <div class="col-lg-4">
+        <div class="position-relative overflow-hidden rounded-4 mb-3" style="height:200px">
+          <img src="img/oferta-combo.jpg" class="w-100 h-100" style="object-fit:cover" alt="Oferta Combo Familiar" />
+          <div class="position-absolute top-0 start-0 w-100 h-100 d-flex align-items-center justify-content-center bg-dark bg-opacity-50">
+            <div class="text-center">
+              <span class="badge badge-vino rounded-pill mb-2 text-dark">Lunes de Alitas</span>
+              <h3 class="text-white m-0">Ofertas del Día</h3>
+            </div>
+          </div>
+        </div>
+        <div class="position-relative overflow-hidden rounded-4" style="height:200px">
+          <img src="img/salsas-dip.jpg" class="w-100 h-100" style="object-fit:cover" alt="Salsas y Dips" />
+          <div class="position-absolute top-0 start-0 w-100 h-100 d-flex align-items-center justify-content-center bg-dark bg-opacity-50">
+            <div class="text-center">
+              <span class="badge text-bg-light rounded-pill mb-2">¡Nuevas!</span>
+              <h3 class="text-white m-0">Salsas Exclusivas</h3>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+    <div class="container pt-4">
+    <div class="row g-3">
+      <div class="col-12 col-md-6 col-lg-3">
+        <div class="feature-tile d-flex align-items-center gap-3">
+          <i class="fa fa-truck-moving fa-2x"></i>
+          <div><h6 class="mb-0">Delivery Express</h6><small class="text-muted">Llega caliente a tu puerta</small></div>
+        </div>
+      </div>
+      <div class="col-12 col-md-6 col-lg-3">
+        <div class="feature-tile d-flex align-items-center gap-3">
+          <i class="fa fa-utensils fa-2x"></i>
+          <div><h6 class="mb-0">Ingredientes Fresh</h6><small class="text-muted">Pollo fresco del día</small></div>
+        </div>
+      </div>
+      <div class="col-12 col-md-6 col-lg-3">
+        <div class="feature-tile d-flex align-items-center gap-3">
+          <i class="fa fa-shield-alt fa-2x"></i>
+          <div><h6 class="mb-0">Compra Segura</h6><small class="text-muted">Pago online o en efectivo</small></div>
+        </div>
+            </div>
+      <div class="col-12 col-md-6 col-lg-3">
+        <div class="feature-tile d-flex align-items-center gap-3">
+          <i class="fa fa-hand-holding-usd fa-2x"></i>
+          <div><h6 class="mb-0">Precios Krójantes</h6><small class="text-muted">Máximo sabor, mejor precio</small></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+    <div class="container my-4">
+    <div class="brand-ticker" aria-label="Nuestras Salsas">
+      <div class="brand-track">
+        <div class="brand bg-warning"><i class="fas fa-fire me-2"></i> Hot Buffalo</div>
+        <div class="brand bg-danger"><i class="fas fa-pepper-hot me-2"></i> Mayonesa Spicy</div>
+        <div class="brand bg-success text-white"><i class="fas fa-leaf me-2"></i> Alioli Casero</div>
+        <div class="brand bg-primary text-white"><i class="fas fa-map-pin me-2"></i> BBQ Ahumada</div>
+        <div class="brand bg-info"><i class="fas fa-seedling me-2"></i> Ranch Clásica</div>
+                <div class="brand bg-warning"><i class="fas fa-fire me-2"></i> Hot Buffalo</div>
+        <div class="brand bg-danger"><i class="fas fa-pepper-hot me-2"></i> Mayonesa Spicy</div>
+        <div class="brand bg-success text-white"><i class="fas fa-leaf me-2"></i> Alioli Casero</div>
+        <div class="brand bg-primary text-white"><i class="fas fa-map-pin me-2"></i> BBQ Ahumada</div>
+        <div class="brand bg-info"><i class="fas fa-seedling me-2"></i> Ranch Clásica</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="container pb-2" id="combos">
+  <div class="d-flex align-items-center justify-content-between mb-2">
+    <h3 class="section-title">Combos Populares</h3>
+    <div class="section-toolbar d-flex gap-2">
+      <button class="nav-btn" aria-label="anterior"><i class="fas fa-chevron-left"></i></button>
+      <button class="nav-btn" aria-label="siguiente"><i class="fas fa-chevron-right"></i></button>
+    </div>
+  </div>
+  <div class="row g-3">
+    <div class="col-12 col-md-6 col-lg-3">
+      <div class="card product-card">
+        <div class="card-head">Combo Dúo (2 Personas)</div>
+        <img src="img/products/combo-duo.jpg" class="card-img-top" alt="Combo Dúo" />
+        <div class="card-actions">
+          <a class="icon-btn" href="#"><i class="fas fa-shopping-cart"></i></a>
+          <a class="icon-btn" href="#"><i class="far fa-heart"></i></a>
+          <a class="icon-btn" href="#"><i class="fas fa-search"></i></a>
+        </div>
+        <div class="card-body d-flex align-items-center justify-content-between">
+          <span class="price">s/39.90</span>
+          <button class="btn btn-vino btn-sm add-cart-featured"><i class="fas fa-shopping-cart me-1"></i>Comprar</button>
+        </div>
+      </div>
+      <small class="text-muted d-block text-center mt-1">4 Piezas + Papas + Bebida</small>
+    </div>
+    <div class="col-12 col-md-6 col-lg-3">
+      <div class="card product-card">
+        <div class="card-head">Bucket Familiar (4 Personas)</div>
+        <img src="img/products/combo-familiar.jpg" class="card-img-top" alt="Bucket Familiar" />
+        <div class="card-actions">
+          <a class="icon-btn" href="#"><i class="fas fa-shopping-cart"></i></a>
+          <a class="icon-btn" href="#"><i class="far fa-heart"></i></a>
+          <a class="icon-btn" href="#"><i class="fas fa-search"></i></a>
+        </div>
+        <div class="card-body d-flex align-items-center justify-content-between">
+          <span class="price">s/74.50</span>
+          <button class="btn btn-vino btn-sm add-cart-featured"><i class="fas fa-shopping-cart me-1"></i>Comprar</button>
+        </div>
+      </div>
+      <small class="text-muted d-block text-center mt-1">8 Piezas + Aros de Cebolla + 2 Bebidas</small>
+    </div>
+    <div class="col-12 col-md-6 col-lg-3">
+      <div class="card product-card">
+        <div class="card-head">Alitas Búfalo 12 Piezas</div>
+        <img src="img/products/alitas-spicy.jpg" class="card-img-top" alt="Alitas Búfalo" />
+        <div class="card-actions">
+          <a class="icon-btn" href="#"><i class="fas fa-shopping-cart"></i></a>
+          <a class="icon-btn" href="#"><i class="far fa-heart"></i></a>
+          <a class="icon-btn" href="#"><i class="fas fa-search"></i></a>
+        </div>
+        <div class="card-body d-flex align-items-center justify-content-between">
+          <span class="price">s/35.00</span>
+          <button class="btn btn-vino btn-sm add-cart-featured"><i class="fas fa-shopping-cart me-1"></i>Comprar</button>
+        </div>
+      </div>
+      <small class="text-muted d-block text-center mt-1">Salsa a elegir + Dip Ranch</small>
+    </div>
+    <div class="col-12 col-md-6 col-lg-3">
+      <div class="card product-card">
+        <div class="card-head">Sándwich Krunch Deluxe</div>
+        <img src="img/products/sandwich-krunch.jpg" class="card-img-top" alt="Sandwich Krunch Deluxe" />
+        <div class="card-actions">
+          <a class="icon-btn" href="#"><i class="fas fa-shopping-cart"></i></a>
+          <a class="icon-btn" href="#"><i class="far fa-heart"></i></a>
+          <a class="icon-btn" href="#"><i class="fas fa-search"></i></a>
+        </div>
+        <div class="card-body d-flex align-items-center justify-content-between">
+          <span class="price">s/24.90</span>
+          <button class="btn btn-vino btn-sm add-cart-featured"><i class="fas fa-shopping-cart me-1"></i>Comprar</button>
+        </div>
+      </div>
+      <small class="text-muted d-block text-center mt-1">Pechuga Krunch + Bacon + Queso Cheddar</small>
+    </div>
+  </div>
+</div>
+
+---
+
+<div id="productos" class="container py-4">
+    <div class="d-flex align-items-center mb-3">
+      <h3 class="me-3">Pollo, Tenders y Sides</h3>
+      <span class="badge badge-vino">Caliente</span>
+    </div>
+    <div id="productGrid" class="row g-3">
+            <div class="col-12 col-sm-6 col-lg-4 product-item" data-name="pollo krunch 10 piezas piezas">
+        <div class="card product-card">
+          <img src="img/products/pollo-10.jpg" class="card-img-top" alt="10 Piezas de Pollo Krunch" />
+          <div class="card-body">
+            <h5 class="card-title mb-1">Pollo Krunch 10 Piezas</h5>
+            <small class="text-muted d-block mb-2">Para compartir en casa (Incluye 3 Dips)</small>
+            <div class="d-flex align-items-center justify-content-between">
+              <span class="price">$ 69.90</span>
+              <button class="btn btn-vino add-cart"><i class="fas fa-shopping-cart me-2"></i>Agregar</button>
+            </div>
+          </div>
+        </div>
+      </div>
+            <div class="col-12 col-sm-6 col-lg-4 product-item" data-name="tenders tiras pollo 6 unidades">
+        <div class="card product-card">
+          <img src="img/products/tenders.jpg" class="card-img-top" alt="Tiras de Pollo Krunch" />
+          <div class="card-body">
+            <h5 class="card-title mb-1">Tenders de Pollo (6 Unid.)</h5>
+            <small class="text-muted d-block mb-2">Pechuga marinada y extra crujiente</small>
+            <div class="d-flex align-items-center justify-content-between">
+              <span class="price">$ 24.50</span>
+              <button class="btn btn-vino add-cart"><i class="fas fa-shopping-cart me-2"></i>Agregar</button>
+            </div>
+          </div>
+        </div>
+      </div>
+            <div class="col-12 col-sm-6 col-lg-4 product-item" data-name="papas fritas rústicas sides">
+        <div class="card product-card">
+          <img src="img/products/papas-rusticas.jpg" class="card-img-top" alt="Papas Fritas Rústicas" />
+          <div class="card-body">
+            <h5 class="card-title mb-1">Papas Fritas Rústicas (Grande)</h5>
+            <small class="text-muted d-block mb-2">Con cáscara y especias de la casa</small>
+            <div class="d-flex align-items-center justify-content-between">
+              <span class="price">$ 12.00</span>
+              <button class="btn btn-vino add-cart"><i class="fas fa-shopping-cart me-2"></i>Agregar</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+    <div class="container pb-4" id="sides">
+    <div class="d-flex align-items-center mb-3">
+      <h3 class="me-3">Otros Sides y Postres</h3>
+      <span class="badge text-bg-secondary">Complementos</span>
+    </div>
+    <div class="row g-3">
+      <div class="col-12 col-md-6 col-lg-3">
+        <div class="card product-card">
+          <div class="card-head">Aros de Cebolla</div>
+          <img src="img/products/aros.jpg" class="card-img-top" alt="Aros de Cebolla" />
+          <div class="card-body d-flex align-items-center justify-content-between">
+            <span class="price">s/10.00</span>
+            <button class="btn btn-vino btn-sm add-cart-featured"><i class="fas fa-shopping-cart me-1"></i>Comprar</button>
+          </div>
+        </div>
+      </div>
+      <div class="col-12 col-md-6 col-lg-3">
+        <div class="card product-card">
+          <div class="card-head">Puré de Papas con Gravy</div>
+          <img src="img/products/pure.jpg" class="card-img-top" alt="Puré de Papas" />
+          <div class="card-body d-flex align-items-center justify-content-between">
+            <span class="price">s/9.50</span>
+            <button class="btn btn-vino btn-sm add-cart-featured"><i class="fas fa-shopping-cart me-1"></i>Comprar</button>
+          </div>
+        </div>
+      </div>
+      <div class="col-12 col-md-6 col-lg-3">
+        <div class="card product-card">
+          <div class="card-head">Ensalada Krunchy Col</div>
+          <img src="img/products/coleslaw.jpg" class="card-img-top" alt="Ensalada Col" />
+          <div class="card-body d-flex align-items-center justify-content-between">
+            <span class="price">s/8.90</span>
+            <button class="btn btn-vino btn-sm add-cart-featured"><i class="fas fa-shopping-cart me-1"></i>Comprar</button>
+          </div>
+        </div>
+      </div>
+      <div class="col-12 col-md-6 col-lg-3">
+        <div class="card product-card">
+          <div class="card-head">Brownie Doble Chocolate</div>
+          <img src="img/products/brownie.jpg" class="card-img-top" alt="Brownie" />
+          <div class="card-body d-flex align-items-center justify-content-between">
+            <span class="price">s/7.90</span>
+            <button class="btn btn-vino btn-sm add-cart-featured"><i class="fas fa-shopping-cart me-1"></i>Comprar</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+---
+
+  <div class="container pb-4">
+  <div class="row g-3">
+    <div class="col-12 col-lg-6">
+      <div class="testimonial d-flex gap-3 align-items-center">
+        <img src="img/people/maria.jpg" alt="Maria" class="bg-warning"/>
+        <div>
+          <h6 class="mb-1">Maria Torres <small class="text-muted">· Fan del Pollo Frito</small></h6>
+          <div class="text-warning mb-1">★★★★★</div>
+          <p class="mb-0 small">El pollo Krunch es el mejor que he probado. La costra es perfecta y no es grasoso. ¡Llegó rapidísimo y super caliente!</p>
+        </div>
+      </div>
+    </div>
+    <div class="col-12 col-lg-6">
+      <div class="testimonial d-flex gap-3 align-items-center">
+        <img src="img/people/alonso.jpg" alt="Alonso" class="bg-warning"/>
+        <div>
+          <h6 class="mb-1">Alonso Ortega <small class="text-muted">· Amante de las Alitas</small></h6>
+          <div class="text-warning mb-1">★★★★★</div>
+          <p class="mb-0 small">Pedí las alitas Buffalo y fueron un acierto total. Tienen el picante justo y el tamaño de las porciones es excelente.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<footer class="pt-4" style="background:#101214; color:#e5e5e5">
+  <div class="container pb-3">
+    <div class="row g-4">
+      <div class="col-12 col-lg-4 footer-col">
+        <h6>Contáctanos y Ordena</h6>
+        <ul class="list-unstyled small mb-0">
+          <li class="mb-1"><i class="fas fa-map-marker-alt me-2"></i>Av. Delivery Rápido 456, Lima, Perú</li>
+          <li class="mb-1"><i class="far fa-envelope me-2"></i>soporte@krochicken.pe</li>
+          <li class="mb-1"><i class="fas fa-phone me-2"></i>+51 999-888-777 (Pedidos)</li>
+        </ul>
+      </div>
+      <div class="col-6 col-lg-2 footer-col">
+        <h6>Síguenos</h6>
+        <div class="d-flex gap-2">
+          <a class="btn btn-outline-light btn-sm" href="#"><i class="fab fa-facebook-f"></i></a>
+          <a class="btn btn-outline-light btn-sm" href="#"><i class="fab fa-instagram"></i></a>
+          <a class="btn btn-outline-light btn-sm" href="#"><i class="fab fa-youtube"></i></a>
+          <a class="btn btn-outline-light btn-sm" href="#"><i class="fab fa-whatsapp"></i></a>
+        </div>
+      </div>
+      <div class="col-6 col-lg-3 footer-col">
+        <h6>Información</h6>
+        <ul class="list-unstyled small mb-0">
+          <li class="mb-1"><i class="fas fa-angle-right me-2"></i>Zona de Cobertura</li>
+          <li class="mb-1"><i class="fas fa-angle-right me-2"></i>Política de Datos</li>
+          <li class="mb-1"><i class="fas fa-angle-right me-2"></i>Términos del Servicio</li>
+        </ul>
+      </div>
+      <div class="col-12 col-lg-3 footer-col">
+        <h6>Métodos de Pago</h6>
+        <ul class="list-unstyled small mb-2">
+          <li class="mb-1"><i class="fas fa-angle-right me-2"></i>Efectivo contra entrega</li>
+          <li class="mb-1"><i class="fas fa-angle-right me-2"></i>Tarjeta de Crédito / Débito</li>
+          <li class="mb-1"><i class="fas fa-angle-right me-2"></i>Yape/Plin (Transferencia)</li>
+        </ul>
+        <div class="pay-logos">
+          <img src="img/pay/visa.png" alt="VISA"/>
+          <img src="img/pay/mastercard.png" alt="Mastercard"/>
+          <img src="img/pay/ssl.png" alt="SSL"/>
+        </div>
+      </div>
+    </div>
+    <hr class="border-secondary opacity-25"/>
+    <div class="d-flex flex-column flex-md-row align-items-center justify-content-between small">
+      <div class="logo-multi"><span class="h6 multi">KRO</span> <span class="h6 vinos">CHICKEN</span></div>
+      <div>¡El mejor sabor frito a tu casa!</div>
+      <div>Copyright © <span id="year"></span> Krochicken Delivery. Todos los derechos reservados.</div>
+    </div>
+  </div>
+</footer>
+<button id="toTop" aria-label="volver arriba"><i class="fas fa-chevron-up"></i></button>
+
+    <script>
+    // Año en footer
+    document.getElementById('year').textContent = new Date().getFullYear();
+
+    // Filtrado por buscador (desktop + mobile)
+    function applyFilter(value){
+      const q = value.toLowerCase().trim();
+      document.querySelectorAll('#productGrid .product-item').forEach(card => {
+        // Buscamos en el atributo data-name que contiene palabras clave
+        const name = (card.getAttribute('data-name') || '').toLowerCase();
+        card.style.display = name.includes(q) ? 'block' : 'none'; // Usar 'block' para las columnas de Bootstrap
+      });
+    }
+    const searchInput = document.getElementById('searchInput');
+    const searchInputMobile = document.getElementById('searchInputMobile');
+    if (searchInput) searchInput.addEventListener('input', e=>applyFilter(e.target.value));
+    if (searchInputMobile) searchInputMobile.addEventListener('input', e=>applyFilter(e.target.value));
+
+    // Simulación de agregar al carrito (para botones .add-cart y .add-cart-featured)
+    document.querySelectorAll('.add-cart, .add-cart-featured').forEach(btn=>{
+      btn.addEventListener('click', ()=>{
+        // Guardamos el texto original para restaurarlo
+        const originalHTML = btn.innerHTML;
+        const originalClasses = btn.className;
+
+        // Animación de éxito
+        btn.classList.add('disabled', 'btn-success');
+        btn.classList.remove('btn-vino', 'btn-primary');
+        btn.innerHTML = '<i class="fas fa-check me-1"></i>¡Agregado!';
+
+        // Restaurar después de 1.5 segundos
+        setTimeout(()=>{
+          btn.className = originalClasses; // Restaurar todas las clases originales
+          btn.innerHTML = originalHTML;
+        }, 1500);
+      })
+    })
+
+    // Back to top
+    const toTop=document.getElementById('toTop');
+    if(toTop){
+      window.addEventListener('scroll',()=>{ toTop.style.display = window.scrollY>400 ? 'grid' : 'none'; });
+      toTop.addEventListener('click',()=>window.scrollTo({top:0,behavior:'smooth'}));
+    }
+  </script>
+</body>
+</html>

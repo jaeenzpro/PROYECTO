@@ -1,0 +1,24 @@
+<?php
+// Conexión a la base de datos
+$conexion = new mysqli("localhost", "root", "", "pollos_delivery");
+
+// Verificar conexión
+if ($conexion->connect_error) {
+  die("Error en la conexión: " . $conexion->connect_error);
+}
+
+// Recibir datos del formulario (por método POST)
+$dni = $_POST['dni'];
+$promocion = $_POST['promocion'];
+$hora = date("H:i:s"); // Hora actual
+
+// Insertar datos en la tabla
+$sql = "INSERT INTO promociones (dni, promocion, hora) VALUES ('$dni', '$promocion', '$hora')";
+if ($conexion->query($sql) === TRUE) {
+  echo "✅ Registro guardado correctamente.";
+} else {
+  echo "❌ Error: " . $conexion->error;
+}
+
+$conexion->close();
+?>
